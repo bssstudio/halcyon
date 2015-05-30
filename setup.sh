@@ -14,7 +14,9 @@ install_os_packages () {
 	'linux-arch'*)
 		# NOTE: There is no sudo on Arch Linux.
 		if [ "${uid}" -eq 0 ]; then
-			pacman --sync --needed --noconfirm base-devel git pigz zlib || return 1
+			#decide between base-devel and multilib-devel based on the evidence that gcc-multilib is installed.
+			BASE_DEVEL_PKGNAME=`pacman -Qi gcc-multilib &> /dev/null && echo multilib-devel || echo base-devel`
+			pacman --sync --needed --noconfirm $BASE_DEVEL_PKGNAME git pigz zlib || return 1
 		else
 			echo '   *** WARNING: Cannot install OS packages' >&2
 			echo '   *** WARNING: Ensure the following OS packages are installed:' >&2
